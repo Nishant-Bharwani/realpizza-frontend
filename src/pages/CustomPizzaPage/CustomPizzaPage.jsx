@@ -172,6 +172,7 @@ const CustomPizzaPage = () => {
     return (
         <div className={`${styles.customizePageWrapper} container`}>
             <h1>Customize Your Pizza</h1>
+            <Toaster />
             {showModal && <OrderModal orderData={orderData} onClose={handleCloseModal} />}
 
             <div className={`${styles.mainContentWrapper} d-flex align-items-center justify-content-evenly flex-wrap`}>
