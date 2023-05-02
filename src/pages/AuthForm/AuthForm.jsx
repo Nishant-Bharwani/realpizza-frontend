@@ -28,9 +28,7 @@ function AuthForm() {
             setLoading(true);
             event.preventDefault();
             try {
-                console.log(process.env.REACT_APP_API_URL);
                 const { data } = await loginUser({ email, password });
-                console.log(data);
                 dispatch(setAuth(data));
                 // navigate('/verify')
                 return <Loader />
