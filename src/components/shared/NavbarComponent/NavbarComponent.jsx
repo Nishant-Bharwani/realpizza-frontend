@@ -21,6 +21,7 @@ const NavbarComponent = () => {
     try {
       const { data } = await logout();
       dispatch(setAuth(data));
+      window.location.reload();
       navigate('/');
     } catch (err) {
       console.log(err);
@@ -48,7 +49,7 @@ const NavbarComponent = () => {
                 {<Link
                   className={`${styles.pizzaNavLink} nav-link`}
                   aria-current="page"
-                  to="/dashboard"
+                  to={isAuthorized ? '/dashboard' : '/'}
                   onClick={() => setShowMenu(false)}
                 >
                   Home
@@ -86,7 +87,7 @@ const NavbarComponent = () => {
               }
               {isAuthorized && <li className="nav-item">
                 <Link to="/cart" className={`${styles.pizzaNavLink}`} onClick={() => setShowMenu(false)}>
-                  <i className="fas fa-shopping-cart"></i>
+                  Cart&nbsp;&nbsp;<i className="fas fa-shopping-cart"></i>
                 </Link>
               </li>}
 
@@ -94,18 +95,19 @@ const NavbarComponent = () => {
 
               {isAuthorized ? (
                 <li className="nav-item">
-                  <Link
+                  <button
+                    title={`Logout`}
                     className="nav-link"
-                    to="/logout"
                     onClick={() => {
                       setShowMenu(false);
-                      logoutUser();
-                      navigate('/');
+                      logoutUser().then(() => {
+                        // navigate('/');
+                      });
                     }}
                   >
-                    <i className="fa fa-sign-out" aria-hidden="true"></i>
+                    Logout&nbsp;&nbsp;<i className="fa fa-sign-out" aria-hidden="true"></i>
 
-                  </Link>
+                  </button>
                 </li>
               ) : (
                 <li className="nav-item">
