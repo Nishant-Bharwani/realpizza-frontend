@@ -32,6 +32,18 @@ label {
     display: block;
 } */
 
+.singleOrder div {
+    /* width: 100px; */
+}
+
+.singleOrder span {
+    font-weight: bold;
+}
+
+.singleOrder span.price {
+    color: rgb(116, 185, 13);
+}
+
 .modalOverlay {
     position: fixed;
     top: 0;

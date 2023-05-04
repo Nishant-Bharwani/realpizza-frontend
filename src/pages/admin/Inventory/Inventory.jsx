@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import toast, { Toaster } from 'react-hot-toast';
+
 import UpdateStockModal from '../../../components/admin/UpdateStockModal/UpdateStockModal';
 import { getAllBases, getAllCheeses, getAllMeats, getAllSauces, getAllVeggies } from '../../../http';
 import './Inventory.css';
@@ -48,11 +50,20 @@ const Inventory = () => {
     const [sauceId, setSauceId] = useState('');
     const [quantity, setQuantity] = useState('');
     const [baseDataTableKey, setBaseDataTableKey] = useState(0);
+    const [sauceDataTableKey, setSauceDataTableKey] = useState(0);
 
 
-    function reloadBaseDataTable() {
+    const reloadBaseDataTable = async () => {
+        const { data } = await getAllBases();
+        setBaseData(data);
         setBaseDataTableKey(baseDataTableKey + 1);
     }
+    const reloadSauceDataTable = async () => {
+        const { data } = await getAllSauces();
+        setSauceData(data);
+        setSauceDataTableKey(sauceDataTableKey + 1);
+    }
+
 
     const handleBaseUpdate = (row) => {
         setBaseId(row._id);
@@ -78,7 +89,9 @@ const Inventory = () => {
         },
         {
             name: 'Name',
-            selector: row => row.name,
+            cell: (row) => {
+                return <div style={{ textTransform: 'capitalize' }}>{row.name}</div>
+            },
             sortable: true
         },
 
@@ -125,7 +138,9 @@ const Inventory = () => {
         },
         {
             name: 'Name',
-            selector: row => row.name,
+            cell: (row) => {
+                return <div style={{ textTransform: 'capitalize' }}>{row.name}</div>
+            },
             sortable: true
         },
 
@@ -172,7 +187,9 @@ const Inventory = () => {
         },
         {
             name: 'Name',
-            selector: row => row.name,
+            cell: (row) => {
+                return <div style={{ textTransform: 'capitalize' }}>{row.name}</div>
+            },
             sortable: true
         },
 
@@ -212,6 +229,7 @@ const Inventory = () => {
 
     return (
         <div className="accordion-list container mt-5">
+            <Toaster />
             <div className={`accordion-item ${isBaseAccordionActive ? 'active' : ''}`}>
                 <button className="accordion-title text-left" onClick={toggleBaseAccordion}>
                     Available Bases
@@ -261,7 +279,7 @@ const Inventory = () => {
                         }}
                     />
 
-                    {showModal && <UpdateStockModal baseId={baseId} onClose={handleCloseModal} />}
+                    {showModal && <UpdateStockModal reloadTable={reloadBaseDataTable} baseId={baseId} onClose={handleCloseModal} />}
 
 
                 </div>
@@ -274,6 +292,7 @@ const Inventory = () => {
                 <div className={`accordion-content ${isSauceAccordionActive ? 'show' : ''}`}>
                     <DataTable
                         title="List of Sauces:"
+                        key={sauceDataTableKey}
                         columns={sauceColumns}
                         data={sauceData}
                         pagination
@@ -315,7 +334,7 @@ const Inventory = () => {
                         }}
                     />
 
-                    {showModal && <UpdateStockModal sauceId={sauceId} onClose={handleCloseModal} />}
+                    {showModal && <UpdateStockModal reloadTable={reloadSauceDataTable} sauceId={sauceId} onClose={handleCloseModal} />}
                 </div>
             </div>
             <div className={`accordion-item ${isCheeseAccordionActive ? 'active' : ''}`}>

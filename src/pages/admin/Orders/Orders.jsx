@@ -5,10 +5,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import { getAllOrdersAdmin, updateStatus } from '../../../http';
 import { socketInit } from '../../../socket';
 
+import OrderDetailsModal from '../../../components/admin/OrderDetailsModal/OrderDetailsModal';
+
 const Orders = () => {
 
-
+    const [showModal, setShowModal] = useState(false);
     const [ordersData, setOrdersData] = useState([]);
+    const [order, setOrder] = useState({});
 
     const socket = useRef(null);
 
@@ -28,6 +31,12 @@ const Orders = () => {
             socket.current.emit('join', "adminOrderPage");
 
             socket.current.on('orderConfirmedCart', (data) => {
+                toast.success(`New Order From ${data.name}`, {
+                    position: 'top-center'
+                });
+            });
+
+            socket.current.on('orderConfirmed', (data) => {
                 toast.success(`New Order From ${data.name}`, {
                     position: 'top-center'
                 });
@@ -80,6 +89,17 @@ const Orders = () => {
         }
     };
 
+    const handleViewDetails = (row) => {
+        setShowModal(true);
+        setOrder(row);
+    };
+
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+
     const orderColumns = [
         {
             name: 'Id',
@@ -91,7 +111,6 @@ const Orders = () => {
         },
         {
             name: 'Order Id',
-            // selector: row => row.orderId,
             cell: (row) => {
                 if (row.orderId) {
                     return <span style={{
@@ -173,7 +192,7 @@ const Orders = () => {
         {
             name: '',
             cell: (row) => {
-                return <span style={{
+                return <span onClick={() => { handleViewDetails(row) }} style={{
                     border: 'none',
                     outline: 'none',
                     background: 'transparent',
@@ -193,7 +212,7 @@ const Orders = () => {
 
     return (
         <div className="container mt-5 text-center">
-            <h1 style={{ color: '#dd4b39' }}>List Of All Orders</h1>
+            <h1 style={{ color: '#dd4b39', margin: '2rem' }}>List Of All Orders</h1>
 
             <div className='border border-2'>
                 <Toaster />
@@ -207,7 +226,6 @@ const Orders = () => {
                     bordered
                     highlightOnHover
                     pointerOnHover
-                    selectableRows
                     customStyles={{
                         head: {
                             style: {
@@ -238,6 +256,8 @@ const Orders = () => {
 
                     }}
                 />
+
+                {showModal && <OrderDetailsModal onClose={handleCloseModal} order={order} />}
             </div>
         </div>
     )

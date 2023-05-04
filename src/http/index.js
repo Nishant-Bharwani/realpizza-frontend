@@ -22,6 +22,10 @@ export const logout = () => api.post('/api/auth/logout');
 
 
 export const getAllPizzas = () => api.get('/api/pizza/');
+export const getAllBasesName = () => api.get('/api/pizza/getBases');
+export const getAllSaucesName = () => api.get('/api/pizza/getSauces');
+export const getAllCheesesName = () => api.get('/api/pizza/getCheeses');
+export const getAllVeggiesName = () => api.get('api/pizza/getVeggies');
 
 
 export const getAllOrders = (userId) => api.get(`/api/order/${userId}`);

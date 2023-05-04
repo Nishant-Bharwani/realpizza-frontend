@@ -22,7 +22,7 @@ const ForgotPassword = () => {
     }
 
     return (
-        <div style={{ background: '#dadada', minHeight: 'calc(100vh - 70px)' }} className="d-flex align-items-center justify-content-center">
+        <div style={{ background: '#f8f9fa', minHeight: 'calc(100vh - 70px)' }} className="d-flex align-items-center justify-content-center">
             <Toaster />
             <div className="container">
                 <div className="row justify-content-center mt-5">

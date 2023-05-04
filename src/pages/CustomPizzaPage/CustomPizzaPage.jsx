@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import OrderModal from "../../components/OrderModal/OrderModal";
 import PizzaButton from "../../components/shared/PizzaButton/PizzaButton";
-import { orderCustomPizza } from "../../http";
+import { getAllBasesName, getAllCheesesName, getAllSaucesName, getAllVeggiesName, orderCustomPizza } from "../../http";
 
 import styles from './CustomPizzaPage.module.css';
 
@@ -11,6 +11,12 @@ const CustomPizzaPage = () => {
     const [sauce, setSauce] = useState("");
     const [cheese, setCheese] = useState("");
     const [selectedVeggies, setSelectedVeggies] = useState([]);
+
+
+    const [basesList, setBasesList] = useState([]);
+    const [saucesList, setSaucesList] = useState([]);
+    const [cheesesList, setCheesesList] = useState([]);
+    const [veggiesList, setVeggiesList] = useState([]);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -169,6 +175,27 @@ const CustomPizzaPage = () => {
         selectedVeggieCaption = `${selectedVeggies[0]} and ${selectedVeggies[1]}`
     }
 
+
+    useEffect(() => {
+        async function getStockData() {
+            try {
+                const { data: bases } = await getAllBasesName();
+                const { data: sauces } = await getAllSaucesName();
+                const { data: cheeses } = await getAllCheesesName();
+                const { data: veggies } = await getAllVeggiesName();
+
+                setBasesList(bases);
+                setSaucesList(sauces);
+                setCheesesList(cheeses);
+                setVeggiesList(veggies);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        getStockData();
+    }, []);
+
     return (
         <div className={`${styles.customizePageWrapper} container`}>
             <h1>Customize Your Pizza</h1>
@@ -192,30 +219,39 @@ const CustomPizzaPage = () => {
                         <h3 style={{ color: '#dd4b39' }}>Choose Your Base:</h3>
                         <select value={base} onChange={handleBaseChange} required>
                             <option value="">--Please choose a base--</option>
-                            <option value="Thin crust">Thin Crust</option>
-                            <option value="thick-crust">Thick Crust</option>
-                            <option value="whole-wheat-crust">Whole Wheat Crust</option>
-                            <option value="gluten-free-crust">Gluten-Free Crust</option>
-                            <option value="cauliflower-crust">Cauliflower Crust</option>
+                            {/* <option value="Thin crust">Thin Crust</option>
+                            <option value="Thick crust">Thick Crust</option>
+                            <option value="Whole wheat crust">Whole Wheat Crust</option>
+                            <option value="Gluten free crust">Gluten Free Crust</option>
+                            <option value="Cauliflower crust">Cauliflower Crust</option> */}
+                            {basesList.map((base) => (
+                                <option key={base.name} value={base.name} style={{ textTransform: 'capitalize' }}>{base.name}</option>
+                            ))}
                         </select>
 
                         <h3 style={{ color: '#dd4b39' }}>Choose Your Sauce:</h3>
                         <select value={sauce} onChange={handleSauceChange} required>
                             <option value="">--Please choose a sauce--</option>
-                            <option value="Tomato sauce">Tomato Sauce</option>
-                            <option value="pesto">Pesto</option>
-                            <option value="alfredo">Alfredo</option>
-                            <option value="bbq">BBQ</option>
-                            <option value="garlic-olive-oil">Garlic Olive Oil</option>
+                            {/* <option value="Tomato sauce">Tomato Sauce</option>
+                            <option value="Pesto sauce">Pesto</option>
+                            <option value="Alfredo sauce">Alfredo</option>
+                            <option value="Barbecue sauce">Barbecue</option>
+                            <option value="Garlic olive oil">Garlic Olive Oil</option> */}
+                            {saucesList.map((sauces) => (
+                                <option key={sauces.name} value={sauces.name} style={{ textTransform: 'capitalize' }}>{sauces.name}</option>
+                            ))}
                         </select>
                         <h3 style={{ color: '#dd4b39' }}>Choose Your Cheese:</h3>
                         <select value={cheese} onChange={handleCheeseChange}>
                             <option value="">--Please choose a cheese--</option>
-                            <option value="Mozzarella">Mozzarella</option>
-                            <option value="parmesan">Parmesan</option>
-                            <option value="cheddar">Cheddar</option>
-                            <option value="gouda">Gouda</option>
-                            <option value="feta">Feta</option>
+                            {/* <option value="Mozzarella">Mozzarella</option>
+                            <option value="Parmesan">Parmesan</option>
+                            <option value="Cheddar">Cheddar</option>
+                            <option value="Gouda">Gouda</option>
+                            <option value="Feta">Feta</option> */}
+                            {cheesesList.map((cheese) => (
+                                <option key={cheese.name} value={cheese.name} style={{ textTransform: 'capitalize' }}>{cheese.name}</option>
+                            ))}
                         </select>
 
 
@@ -226,7 +262,7 @@ const CustomPizzaPage = () => {
                                 <p className={`${styles.textDanger}`}>You can select at max. 2 veggies</p>
                             )}
 
-                            <div className="form-check" style={{ display: 'flex', padding: 0 }}>
+                            {/* <div className="form-check" style={{ display: 'flex', padding: 0 }}>
                                 <input
                                     className={`${styles.veggieInputCheckbox}`}
                                     type="checkbox"
@@ -272,14 +308,14 @@ const CustomPizzaPage = () => {
                                 <input
                                     className={`${styles.veggieInputCheckbox}`}
                                     type="checkbox"
-                                    value="pepperoni"
+                                    value="olives"
                                     onChange={handleVeggiesChange}
-                                    checked={selectedVeggies.includes("pepperoni")}
-                                    disabled={selectedVeggies.length === 2 && !selectedVeggies.includes("pepperoni")}
+                                    checked={selectedVeggies.includes("olives")}
+                                    disabled={selectedVeggies.length === 2 && !selectedVeggies.includes("olives")}
                                 />
 
-                                <label className={`${styles.labelVeggie} form-check-label`} htmlFor="pepperoni">
-                                    Pepperoni
+                                <label className={`${styles.labelVeggie} form-check-label`} htmlFor="olives">
+                                    Olives
                                 </label>
                             </div>
                             <div className="form-check" style={{ display: 'flex', padding: 0 }}>
@@ -295,7 +331,25 @@ const CustomPizzaPage = () => {
                                 <label className={`${styles.labelVeggie} form-check-label`} htmlFor="jalapenos">
                                     Jalapenos
                                 </label>
-                            </div>
+                            </div> */}
+
+                            {veggiesList.map((veggie) => (
+                                <div key={veggie.name} className="form-check" style={{ display: 'flex', padding: 0 }}>
+                                    <input
+                                        className={`${styles.veggieInputCheckbox}`}
+                                        type="checkbox"
+                                        value={veggie.name}
+                                        onChange={handleVeggiesChange}
+                                        checked={selectedVeggies.includes(veggie.name)}
+                                        disabled={selectedVeggies.length === 2 && !selectedVeggies.includes(veggie.name)}
+                                    />
+
+                                    <label className={`${styles.labelVeggie} form-check-label`} htmlFor={veggie.name} style={{ textTransform: 'capitalize' }}>
+                                        {veggie.name}
+                                    </label>
+                                </div>
+                            ))}
+
                         </div>
                     </div>
                 </div>

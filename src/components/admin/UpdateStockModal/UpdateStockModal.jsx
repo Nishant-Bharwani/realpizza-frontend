@@ -9,7 +9,6 @@ const UpdateStockModal = (props) => {
 
     const [quantity, setQuantity] = useState(props.currentStock);
 
-
     async function handleSubmit(e) {
         e.preventDefault();
 
@@ -23,6 +22,11 @@ const UpdateStockModal = (props) => {
                 });
 
                 dataMsg = data.message;
+                props.onClose();
+                props.reloadTable();
+                toast.success(dataMsg, {
+                    position: "top-right",
+                });
             } else if (props.sauceId) {
                 const { data } = await updateSauceStock({
                     sauceId: props.sauceId,
@@ -30,11 +34,13 @@ const UpdateStockModal = (props) => {
                 });
 
                 dataMsg = data.message;
+
+                props.onClose();
+                props.reloadTable();
+                toast.success(dataMsg, {
+                    position: "top-right",
+                });
             }
-            // props.reloadBaseDataTable();
-            toast.success(dataMsg, {
-                position: "top-right",
-            });
         } catch (err) {
             console.log(err);
 
@@ -63,7 +69,7 @@ const UpdateStockModal = (props) => {
                         <div className={styles.formGroup}>
                             {/* <label htmlFor="quantity">Quantity:</label> */}
                             <input
-                                type="text"
+                                type="number"
                                 id="quantity"
                                 placeholder={`Enter quantity to be added`}
                                 onChange={handleQuantityChange}
